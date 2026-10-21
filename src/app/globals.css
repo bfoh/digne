@@ -1,0 +1,988 @@
+@import "tailwindcss";
+
+/* ───────────────────────────── Design tokens ───────────────────────────── */
+
+@theme {
+  /* Palette — derived from the Digne badge and showroom photography.
+     Gold is for hairlines, numerals and accents on dark grounds only
+     (2:1 on ivory, 7:1 on burgundy). */
+  --color-burgundy: #4b0813;
+  --color-burgundy-deep: #2b040b;
+  --color-heritage: #8d1420;
+  --color-gold: #c4a46a;
+  --color-gold-soft: #dcc59b;
+  --color-ivory: #f5f0e8;
+  --color-cream: #eae1d5;
+  --color-charcoal: #181716;
+  --color-ink: #0d0d0d;
+  --color-noir: #120a0b;
+  /* Secondary text. #5e5952 = 6.1:1 on ivory, 5.4:1 on cream; #a39b90 = 6:1 on burgundy, 7.4:1 on ink. */
+  --color-muted: #5e5952;
+  --color-muted-dark: #a39b90;
+
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-mask: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --breakpoint-xs: 25rem;
+  --breakpoint-3xl: 112rem;
+}
+
+:root {
+  --gutter: clamp(1rem, 3.4vw, 3.25rem);
+  --header-h: 4.5rem;
+  --focus: var(--color-heritage);
+  --line: rgb(24 23 22 / 0.16);
+  color-scheme: light;
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --header-h: 5.25rem;
+  }
+}
+
+/* ───────────────────────────── Base ───────────────────────────── */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-burgundy);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  [data-theme="dark"] {
+    --focus: var(--color-gold);
+    --line: rgb(245 240 232 / 0.18);
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  /* Lenis */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: clip;
+  }
+  .lenis [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-smooth iframe {
+    pointer-events: none;
+  }
+}
+
+/* ───────────────────────────── Typography ───────────────────────────── */
+
+@utility display-xxl {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(3.4rem, 9.2vw, 11rem);
+  line-height: 0.88;
+  letter-spacing: -0.025em;
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.9rem, 6.8vw, 7.75rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2.4rem, 4.7vw, 5.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+
+@utility display-md {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 2.9vw, 3.3rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+@utility display-sm {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.45rem, 1.9vw, 2.1rem);
+  line-height: 1.12;
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+@utility label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+@utility lede {
+  font-size: clamp(1.02rem, 1.12vw, 1.2rem);
+  line-height: 1.7;
+}
+
+@utility numeral {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-feature-settings: "lnum" 1;
+}
+
+@utility gutter {
+  padding-inline: var(--gutter);
+}
+
+@utility hairline {
+  border-color: var(--line);
+}
+
+/* ───────────────────────────── Components ───────────────────────────── */
+
+@layer components {
+  .skip-link {
+    position: fixed;
+    left: var(--gutter);
+    top: 0.75rem;
+    z-index: 200;
+    transform: translateY(-160%);
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    padding: 0.85rem 1.25rem;
+    transition: transform 0.3s var(--ease-editorial);
+  }
+  .skip-link:focus-visible {
+    transform: none;
+  }
+
+  /* Editorial button: rectangular, tracked label, fill wipes in from the left. */
+  .btn {
+    --btn-fg: var(--color-ivory);
+    --btn-bg: var(--color-charcoal);
+    --btn-fill: var(--color-burgundy);
+    --btn-fill-fg: var(--color-ivory);
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    min-height: 3.25rem;
+    padding-inline: 1.75rem;
+    overflow: hidden;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    border: 1px solid var(--btn-bg);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition:
+      color 0.5s var(--ease-editorial),
+      border-color 0.5s var(--ease-editorial);
+  }
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--btn-fill);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.6s var(--ease-mask);
+  }
+  @media (hover: hover) {
+    .btn:hover {
+      color: var(--btn-fill-fg);
+      border-color: var(--btn-fill);
+    }
+    .btn:hover::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+    }
+  }
+  .btn-light {
+    --btn-fg: var(--color-charcoal);
+    --btn-bg: var(--color-ivory);
+    --btn-fill: var(--color-gold-soft);
+    --btn-fill-fg: var(--color-ink);
+  }
+  .btn-outline {
+    --btn-fg: currentColor;
+    background: transparent;
+    border-color: currentColor;
+  }
+  .btn-outline-light {
+    --btn-fg: var(--color-ivory);
+    --btn-fill: var(--color-ivory);
+    --btn-fill-fg: var(--color-ink);
+    background: transparent;
+    border-color: rgb(245 240 232 / 0.55);
+  }
+  .btn-block {
+    width: 100%;
+  }
+  .btn[disabled],
+  .btn[aria-disabled="true"] {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  /* Underlined text link: the rule retracts right, then redraws from the left. */
+  .link-line {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.4rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .link-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform-origin: left;
+    transition: transform 0.7s var(--ease-mask);
+  }
+  @media (hover: hover) {
+    .link-line:hover::after {
+      animation: line-redraw 0.9s var(--ease-mask);
+    }
+  }
+  .link-line .arrow {
+    transition: transform 0.6s var(--ease-editorial);
+  }
+  @media (hover: hover) {
+    .link-line:hover .arrow,
+    .btn:hover .arrow,
+    .group:hover .arrow {
+      transform: translateX(0.35rem);
+    }
+  }
+
+  /* Text roll: on hover the label lifts out and an identical copy rises in.
+     The second copy is aria-hidden. */
+  .text-roll {
+    display: inline-grid;
+    overflow: hidden;
+  }
+  .text-roll > * {
+    grid-area: 1 / 1;
+    transition: transform 0.85s var(--ease-mask);
+  }
+  .text-roll > :last-child {
+    transform: translateY(108%);
+  }
+  @media (hover: hover) {
+    .group:hover .text-roll > :first-child {
+      transform: translateY(-108%);
+    }
+    .group:hover .text-roll > :last-child {
+      transform: none;
+    }
+  }
+
+  /* Media frame with a quiet hover zoom. */
+  .media-zoom img {
+    transition:
+      transform 1.4s var(--ease-editorial),
+      filter 0.8s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .group:hover .media-zoom img,
+    .media-zoom:hover img {
+      transform: scale(1.045);
+    }
+  }
+
+  .field-input {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.85rem 1rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    color: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s var(--ease-soft);
+  }
+  .field-input:hover {
+    border-color: color-mix(in srgb, currentColor 45%, transparent);
+  }
+  .field-input:focus-visible {
+    outline-offset: 0;
+    border-color: var(--focus);
+  }
+  .field-input[aria-invalid="true"] {
+    border-color: var(--color-heritage);
+  }
+}
+
+@keyframes line-redraw {
+  0% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+  45% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  46% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ───────────────────────────── Sheets (dialogs) ─────────────────────────────
+   One native <dialog> per sheet, stretched over the viewport; the panel inside
+   carries the animation. data-state="closed" plays the exit before close(). */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-charcoal);
+  overflow: hidden;
+}
+.sheet::backdrop {
+  background: rgb(18 10 11 / 0.5);
+  backdrop-filter: blur(3px);
+}
+.sheet[data-state="open"]::backdrop {
+  animation: sheet-fade-in 0.5s var(--ease-soft) both;
+}
+.sheet[data-state="closed"]::backdrop {
+  animation: sheet-fade-out 0.4s var(--ease-soft) both;
+}
+.sheet-panel {
+  position: absolute;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-ivory);
+}
+
+/* modal — a bottom sheet on phones, a centred card from 48rem */
+.sheet[data-variant="modal"] .sheet-panel {
+  inset: auto 0 0 0;
+  max-height: 88dvh;
+}
+.sheet[data-variant="modal"][data-state="open"] .sheet-panel {
+  animation: sheet-rise 0.65s var(--ease-editorial) both;
+}
+.sheet[data-variant="modal"][data-state="closed"] .sheet-panel {
+  animation: sheet-sink 0.4s var(--ease-mask) both;
+}
+@media (min-width: 48rem) {
+  .sheet[data-variant="modal"] .sheet-panel {
+    inset: 50% auto auto 50%;
+    width: min(58rem, calc(100vw - 3rem));
+    max-height: min(46rem, calc(100dvh - 3rem));
+    translate: -50% -50%;
+  }
+  .sheet[data-variant="modal"][data-state="open"] .sheet-panel {
+    animation: sheet-appear 0.7s var(--ease-editorial) both;
+  }
+  .sheet[data-variant="modal"][data-state="closed"] .sheet-panel {
+    animation: sheet-vanish 0.32s var(--ease-soft) both;
+  }
+}
+
+/* drawer — from the right */
+.sheet[data-variant="drawer"] .sheet-panel {
+  inset: 0 0 0 auto;
+  width: min(30rem, 100vw);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet[data-variant="drawer"][data-state="open"] .sheet-panel {
+  animation: sheet-slide-in 0.75s var(--ease-editorial) both;
+}
+.sheet[data-variant="drawer"][data-state="closed"] .sheet-panel {
+  animation: sheet-slide-out 0.45s var(--ease-mask) both;
+}
+
+/* lightbox — full screen */
+.sheet[data-variant="lightbox"] .sheet-panel {
+  inset: 0;
+  overflow: hidden;
+}
+.sheet[data-variant="lightbox"][data-state="open"] .sheet-panel {
+  animation: sheet-fade-in 0.45s var(--ease-soft) both;
+}
+.sheet[data-variant="lightbox"][data-state="closed"] .sheet-panel {
+  animation: sheet-fade-out 0.3s var(--ease-soft) both;
+}
+
+@keyframes sheet-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-rise {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-sink {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-appear {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem) scale(0.985);
+  }
+}
+@keyframes sheet-vanish {
+  to {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.99);
+  }
+}
+@keyframes sheet-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes sheet-slide-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ───────────────────────────── Product cards ─────────────────────────────
+   On a fine pointer the card swaps to its second view (on-model when supplied,
+   a detail otherwise). plus-lighter keeps the cross-fade from dipping in
+   brightness; the alternate image is display:none on touch, so it is never
+   downloaded there. */
+
+.piece-card__views {
+  isolation: isolate;
+}
+.piece-card__main,
+.piece-card__alt {
+  transition:
+    opacity 0.45s var(--ease-soft),
+    transform 1.4s var(--ease-editorial);
+}
+.piece-card__alt {
+  display: none;
+}
+.piece-card__quick svg {
+  transition: transform 0.4s var(--ease-editorial);
+}
+@media (hover: hover) and (pointer: fine) {
+  .piece-card__alt {
+    display: block;
+    opacity: 0;
+    transform: scale(1.04);
+    mix-blend-mode: plus-lighter;
+  }
+  .piece-card:hover .piece-card__alt {
+    opacity: 1;
+    transform: none;
+  }
+  .piece-card:hover .piece-card__views:has(.piece-card__alt) .piece-card__main {
+    opacity: 0;
+  }
+  .piece-card:hover .piece-card__views:not(:has(.piece-card__alt)) .piece-card__main {
+    transform: scale(1.045);
+  }
+  .piece-card__quick {
+    opacity: 0;
+    transform: translateY(5px);
+    transition:
+      opacity 0.25s var(--ease-soft),
+      transform 0.25s var(--ease-soft),
+      background-color 0.3s var(--ease-soft),
+      color 0.3s var(--ease-soft);
+  }
+  .piece-card:hover .piece-card__quick,
+  .piece-card:focus-within .piece-card__quick {
+    opacity: 1;
+    transform: none;
+  }
+  .piece-card__quick:hover svg,
+  .piece-card__quick:focus-visible svg {
+    transform: rotate(90deg);
+  }
+}
+
+/* ───────────────────────────── Options ───────────────────────────── */
+
+/* Block swatch: a bordered option; unavailable sizes are struck through. */
+.option-block {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 3rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--line);
+  color: rgb(24 23 22 / 0.72);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    border-color 0.25s var(--ease-soft),
+    color 0.25s var(--ease-soft);
+}
+.option-block:hover {
+  border-color: rgb(24 23 22 / 0.45);
+  color: var(--color-charcoal);
+}
+:checked + .option-block {
+  border-color: var(--color-charcoal);
+  color: var(--color-charcoal);
+  box-shadow: inset 0 0 0 0.5px var(--color-charcoal);
+}
+:focus-visible + .option-block {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+:disabled + .option-block {
+  color: rgb(24 23 22 / 0.4);
+  cursor: not-allowed;
+}
+:disabled + .option-block::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 0.5px),
+    var(--line) calc(50% - 0.5px) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+/* Sentence-case underlined link; the rule retracts on hover. */
+.link-under {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  padding-bottom: 0.15em;
+  transition: background-size 0.45s var(--ease-mask);
+}
+@media (hover: hover) {
+  .link-under:hover {
+    background-size: 0 1px;
+    background-position: 100% 100%;
+  }
+}
+
+/* Accordion: <details> with an animated plus and (where supported) height. */
+.accordion summary {
+  list-style: none;
+}
+.accordion summary::-webkit-details-marker {
+  display: none;
+}
+.accordion .plus {
+  position: relative;
+  width: 0.7rem;
+  height: 0.7rem;
+  flex: none;
+}
+.accordion .plus::before,
+.accordion .plus::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.4s var(--ease-editorial);
+}
+.accordion .plus::after {
+  transform: rotate(90deg);
+}
+.accordion[open] .plus::after {
+  transform: rotate(0deg);
+}
+@supports (interpolate-size: allow-keywords) {
+  .accordion {
+    interpolate-size: allow-keywords;
+  }
+  .accordion::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size 0.5s var(--ease-editorial),
+      content-visibility 0.5s allow-discrete;
+  }
+  .accordion[open]::details-content {
+    block-size: auto;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ───────────────────────────── Long-form text ───────────────────────────── */
+
+.prose-digne {
+  max-width: 42rem;
+  color: rgb(24 23 22 / 0.82);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.prose-digne > * + * {
+  margin-top: 1.1em;
+}
+.prose-digne strong {
+  color: var(--color-charcoal);
+  font-weight: 600;
+}
+.prose-digne a {
+  color: var(--color-charcoal);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+.prose-digne a:hover {
+  color: var(--color-heritage);
+}
+.prose-digne ul {
+  display: grid;
+  gap: 0.6em;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.prose-digne li::marker {
+  color: var(--color-heritage);
+}
+.prose-digne code {
+  font-size: 0.875em;
+  padding: 0.1em 0.35em;
+  background: var(--color-cream);
+}
+
+/* ───────────────────────────── Touch ───────────────────────────── */
+
+/* A group's hover state on touch screens, set while it is centred on screen. */
+@custom-variant group-peek (&:is(.group[data-peek] *));
+
+/* A native scroll-snap row for phones and tablets: swipe, momentum and
+   keyboard scrolling all come from the browser. */
+@utility swipe-row {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  /* Without hover, a press needs to be felt. */
+  .btn,
+  .press {
+    transition-property: color, border-color, transform;
+    transition-duration: 0.5s, 0.5s, 0.2s;
+  }
+  .btn:active,
+  .press:active {
+    transform: scale(0.97);
+  }
+  /* The hover fill sweeps in under the finger instead. */
+  .btn:active {
+    color: var(--btn-fill-fg);
+    border-color: var(--btn-fill);
+  }
+  .btn:active::before {
+    transform: scaleX(1);
+    transform-origin: left center;
+    transition-duration: 0.35s;
+  }
+  .link-line:active,
+  .link-under:active {
+    opacity: 0.6;
+  }
+
+  /* No hover either: whatever passes through the middle of the screen takes
+     its hover state (TouchPeek sets data-peek on the nearest .group; Tailwind
+     classes use the group-peek variant). */
+  html[data-motion="full"] [data-peek] .text-roll > :first-child {
+    transform: translateY(-108%);
+  }
+  html[data-motion="full"] [data-peek] .text-roll > :last-child {
+    transform: none;
+  }
+  html[data-motion="full"] [data-peek] .media-zoom img,
+  html[data-motion="full"] .piece-card[data-peek] .piece-card__views:not(:has(.piece-card__alt)) .piece-card__main {
+    transform: scale(1.045);
+  }
+  html[data-motion="full"] [data-peek] .arrow {
+    transform: translateX(0.35rem);
+  }
+
+  /* A card shows its second view. */
+  html[data-motion="full"] .piece-card__alt {
+    display: block;
+    opacity: 0;
+    transform: scale(1.04);
+    mix-blend-mode: plus-lighter;
+    transition:
+      opacity 0.9s var(--ease-soft),
+      transform 1.6s var(--ease-editorial);
+  }
+  html[data-motion="full"] .piece-card[data-peek] .piece-card__alt {
+    opacity: 1;
+    transform: none;
+  }
+  html[data-motion="full"] .piece-card[data-peek] .piece-card__views:has(.piece-card__alt) .piece-card__main {
+    opacity: 0;
+    transition-duration: 0.9s;
+  }
+}
+
+/* ───────────────────────────── Motion gating ─────────────────────────────
+   The head script sets html[data-motion="full"] when motion is allowed.
+   Intro elements start hidden only then; GSAP reveals them. If scripts never
+   boot, a failsafe shows everything after 6s. Once the motion system boots it
+   sets html[data-motion-ready], which stands the failsafe down. */
+
+html[data-motion="full"] [data-intro] {
+  opacity: 0;
+  animation: intro-failsafe 0.8s var(--ease-soft) 6s forwards;
+}
+html[data-motion="full"][data-motion-ready] [data-intro] {
+  animation: none;
+}
+
+@keyframes intro-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Preloader: shown only on the first full load of a session with motion allowed. */
+.preloader {
+  display: none;
+}
+html[data-motion="full"]:not([data-intro-seen]) .preloader {
+  display: grid;
+  animation: preloader-failsafe 0.6s var(--ease-soft) 6s forwards;
+}
+html[data-motion="full"][data-motion-ready]:not([data-intro-seen]) .preloader {
+  animation: none;
+}
+/* Initial states, so nothing flashes between first paint and hydration. */
+.preloader [data-layer="emblem"] {
+  clip-path: inset(100% 0 0 0);
+}
+.preloader [data-layer="script"] {
+  clip-path: inset(0 100% 0 0);
+}
+.preloader [data-layer="tagline"],
+.preloader [data-place] {
+  opacity: 0;
+}
+.preloader [data-rule] {
+  transform: scaleX(0);
+}
+
+html[data-scroll-locked] {
+  overflow: hidden;
+}
+
+@keyframes preloader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Scroll progress — pure CSS where scroll-driven animations are supported. */
+.scroll-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    transform-origin: left center;
+    transform: scaleX(0);
+    animation: progress-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+@keyframes progress-grow {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ───────────────────────────── Page transitions ───────────────────────────── */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 50;
+}
+
+::view-transition-old(.page-exit) {
+  animation: 380ms var(--ease-mask) both page-out;
+}
+::view-transition-new(.page-enter) {
+  animation: 760ms var(--ease-editorial) 160ms both page-in;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-1.5vh);
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(3vh);
+    clip-path: inset(6% 0 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+::view-transition-group(.morph) {
+  animation-duration: 700ms;
+  animation-timing-function: var(--ease-editorial);
+}
+
+/* ───────────────────────────── Reduced motion ───────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  /* Timers, not motion: a slideshow interval must keep its real duration. */
+  .timed-progress {
+    animation-duration: var(--timed-duration) !important;
+  }
+}
+
+/* Inner-page heroes: the photograph settles as the page arrives. It holds its
+   first frame until the motion system boots, so it never competes with
+   hydration for the main thread. */
+html[data-motion="full"] .page-hero__media {
+  animation: hero-settle 2.4s var(--ease-editorial) both paused;
+}
+html[data-motion="full"][data-motion-ready] .page-hero__media {
+  animation-play-state: running;
+}
+@keyframes hero-settle {
+  from {
+    transform: scale(1.08);
+  }
+}
+
+.scroll-cue {
+  animation: scroll-cue 2.6s var(--ease-soft) infinite;
+}
+@keyframes scroll-cue {
+  0%,
+  100% {
+    transform: translateY(-2px);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 1;
+  }
+}
